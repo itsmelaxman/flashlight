@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'util/flashlight.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,35 +31,43 @@ class FlashLightScreen extends StatefulWidget {
 }
 
 class _FlashLightScreenState extends State<FlashLightScreen> {
-  bool flashlight_on = true;
+  bool hasFlashlight = false;
 
-  void _switchFlashlight() {
+  @override
+  initState() {
+    super.initState();
+    switchFlashlight();
+  }
+
+  switchFlashlight() async {
+    bool hasFlash = await Flashlight.hasFlashlight;
+    print("Device has flash ? $hasFlash");
     setState(() {
-      flashlight_on = !flashlight_on;
+      hasFlashlight = hasFlash;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InkWell(
-          onTap: _switchFlashlight,
-          child: Container(
-              color: flashlight_on ? Colors.white : Colors.black,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          flashlight_on ? Icons.flash_on : Icons.flash_off,
-                          color: Colors.grey,
-                          size: 40.0,
-                        ),
-                        onPressed: null)
-                  ],
-                ),
-              ))),
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(hasFlashlight
+              ? 'Your phone has a Flashlight.'
+              : 'Your phone has no Flashlight.'),
+          IconButton(
+            icon: Icon(
+              hasFlashlight ? Icons.flash_on : Icons.flash_off,
+              color: Colors.grey,
+              size: 40.0,
+            ),
+            onPressed: () =>
+                hasFlashlight ? Flashlight.lightOn() : Flashlight.lightOff(),
+          ),
+        ],
+      )),
     );
   }
 }
